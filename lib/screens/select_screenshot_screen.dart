@@ -1,173 +1,153 @@
 import 'package:flutter/material.dart';
+import '../theme/app_colors.dart';
+import '../widgets/app_nav_bar.dart';
+import '../widgets/app_top_bar.dart';
+import '../widgets/privacy_info_card.dart';
+import '../widgets/pulsing_action_circle.dart';
+import 'home_screen.dart';
 
 class SelectScreenshotScreen extends StatelessWidget {
   const SelectScreenshotScreen({super.key});
 
+  void _handleNavTap(BuildContext context, int index) {
+    if (index == 0) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const HomeScreen(),
+        ),
+      );
+    }
+  }
+
+  void _openGallery(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Gallery picker will be added here'),
+      ),
+    );
+  }
+
+  void _browseFiles(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('File browser will be added here'),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    const primaryBlue = Color(0xFF3B6EF5);
-    const textDark = Color(0xFF1F2937);
-    const textGray = Color(0xFF4B5563);
-    const screenBg = Color(0xFFF3F4F6);
-    const cardBorder = Color(0xFFD9DEE8);
-
     return Scaffold(
-      backgroundColor: screenBg,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: const Icon(Icons.arrow_back_ios_new, color: primaryBlue),
-        ),
-        title: const Text(
-          'Select Screenshot',
-          style: TextStyle(
-            color: textDark,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
+      backgroundColor: AppColors.surface,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Text(
-                'Choose a screenshot from your phone.',
-                style: TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w600,
-                  color: textDark,
+        child: Column(
+          children: [
+            const AppTopBar(),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(20, 28, 20, 20),
+                child: Column(
+                  children: [
+                    const _PageHeader(),
+                    const SizedBox(height: 18),
+                    _UploadActionSection(
+                      onOpenGallery: () => _openGallery(context),
+                      onBrowseFiles: () => _browseFiles(context),
+                    ),
+                    const SizedBox(height: 26),
+                    const PrivacyInfoCard(),
+                  ],
                 ),
               ),
-              const SizedBox(height: 20),
-
-              SizedBox(
-                height: 52,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // TODO: open gallery / image picker
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: primaryBlue,
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                  ),
-                  child: const Text(
-                    'Open Gallery',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 14),
-
-              SizedBox(
-                height: 52,
-                child: OutlinedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: primaryBlue,
-                    backgroundColor: Colors.white,
-                    side: const BorderSide(color: cardBorder),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                  ),
-                  child: const Text(
-                    'Back',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 30),
-
-              const _TipsCard(
-                title: 'Tips',
-                tips: [
-                  'Make sure the sender, link, or message is visible.',
-                  'Use a clear screenshot, not a photo of the screen.',
-                  'Crop out extra private information if possible.',
-                ],
-              ),
-            ],
-          ),
+            ),
+            AppNavBar(
+              currentIndex: 1,
+              onTap: (index) => _handleNavTap(context, index),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-class _TipsCard extends StatelessWidget {
-  final String title;
-  final List<String> tips;
+class _PageHeader extends StatelessWidget {
+  const _PageHeader();
 
-  const _TipsCard({
-    required this.title,
-    required this.tips,
+  @override
+  Widget build(BuildContext context) {
+    return const Column(
+      children: [
+        Text(
+          'Select Screenshot',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: AppColors.textDark,
+            fontSize: 27,
+            height: 1.1,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        SizedBox(height: 14),
+        Text(
+          'Pick an image from your device to\nbegin the security analysis.',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: AppColors.textMuted,
+            fontSize: 15,
+            height: 1.4,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _UploadActionSection extends StatelessWidget {
+  final VoidCallback onOpenGallery;
+  final VoidCallback onBrowseFiles;
+
+  const _UploadActionSection({
+    required this.onOpenGallery,
+    required this.onBrowseFiles,
   });
 
   @override
   Widget build(BuildContext context) {
-    const primaryBlue = Color(0xFF3B6EF5);
-    const textGray = Color(0xFF4B5563);
-    const cardBorder = Color(0xFFD9DEE8);
-
-    return Container(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 18),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: cardBorder),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Center(
-            child: Text(
-              title,
-              style: const TextStyle(
-                color: primaryBlue,
-                fontSize: 22,
-                fontWeight: FontWeight.w800,
+    return Column(
+      children: [
+        PulsingActionCircle(
+          size: 220,
+          icon: Icons.photo_library_rounded,
+          title: 'Open Gallery',
+          onTap: onOpenGallery,
+        ),
+        const SizedBox(height: 14),
+        GestureDetector(
+          onTap: onBrowseFiles,
+          child: const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.folder_rounded,
+                size: 16,
+                color: AppColors.primary,
               ),
-            ),
-          ),
-          const SizedBox(height: 12),
-          const Divider(height: 1, color: cardBorder),
-          const SizedBox(height: 14),
-          ...tips.map(
-                (tip) => Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Text(
-                '• $tip',
-                style: const TextStyle(
-                  color: textGray,
-                  fontSize: 15,
-                  height: 1.35,
+              SizedBox(width: 6),
+              Text(
+                'Browse Files',
+                style: TextStyle(
+                  color: AppColors.primary,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
