@@ -5,6 +5,7 @@ import '../widgets/app_top_bar.dart';
 import '../widgets/privacy_info_card.dart';
 import '../widgets/pulsing_action_circle.dart';
 import 'home_screen.dart';
+import 'review_screenshot_screen.dart';
 
 class SelectScreenshotScreen extends StatelessWidget {
   const SelectScreenshotScreen({super.key});
@@ -20,18 +21,20 @@ class SelectScreenshotScreen extends StatelessWidget {
     }
   }
 
-  void _openGallery(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Gallery picker will be added here'),
+  void _openReviewScreen(BuildContext context) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const ReviewScreenshotScreen(),
       ),
     );
   }
 
   void _browseFiles(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('File browser will be added here'),
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const ReviewScreenshotScreen(),
       ),
     );
   }
@@ -52,7 +55,7 @@ class SelectScreenshotScreen extends StatelessWidget {
                     const _PageHeader(),
                     const SizedBox(height: 18),
                     _UploadActionSection(
-                      onOpenGallery: () => _openGallery(context),
+                      onOpenGallery: () => _openReviewScreen(context),
                       onBrowseFiles: () => _browseFiles(context),
                     ),
                     const SizedBox(height: 26),

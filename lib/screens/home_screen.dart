@@ -11,7 +11,7 @@ class HomeScreen extends StatelessWidget {
 
   void _handleNavTap(BuildContext context, int index) {
     if (index == 1) {
-      Navigator.push(
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (_) => const SelectScreenshotScreen(),
@@ -21,7 +21,7 @@ class HomeScreen extends StatelessWidget {
   }
 
   void _openSelectScreenshotScreen(BuildContext context) {
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (_) => const SelectScreenshotScreen(),
