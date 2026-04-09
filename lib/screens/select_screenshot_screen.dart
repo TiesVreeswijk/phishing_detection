@@ -1,4 +1,9 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+
 import '../theme/app_colors.dart';
 import '../widgets/app_nav_bar.dart';
 import '../widgets/app_top_bar.dart';
@@ -21,21 +26,55 @@ class SelectScreenshotScreen extends StatelessWidget {
     }
   }
 
-  void _openReviewScreen(BuildContext context) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (_) => const ReviewScreenshotScreen(),
-      ),
-    );
+  Future<void> _openGallery(BuildContext context) async {
+    try {
+      final picker = ImagePicker();
+      final XFile? pickedFile = await picker.pickImage(
+        source: ImageSource.gallery,
+      );
+
+      if (pickedFile == null || !context.mounted) return;
+
+      final imageFile = File(pickedFile.path);
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => ReviewScreenshotScreen(imageFile: imageFile),
+        ),
+      );
+    } catch (e) {
+      _showError(context, 'Could not open gallery: $e');
+    }
   }
 
-  void _browseFiles(BuildContext context) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (_) => const ReviewScreenshotScreen(),
-      ),
+  Future<void> _browseFiles(BuildContext context) async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['png', 'jpg', 'jpeg', 'webp'],
+      );
+
+      if (result == null || result.files.single.path == null || !context.mounted) {
+        return;
+      }
+
+      final imageFile = File(result.files.single.path!);
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => ReviewScreenshotScreen(imageFile: imageFile),
+        ),
+      );
+    } catch (e) {
+      _showError(context, 'Could not browse files: $e');
+    }
+  }
+
+  void _showError(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
     );
   }
 
@@ -55,7 +94,7 @@ class SelectScreenshotScreen extends StatelessWidget {
                     const _PageHeader(),
                     const SizedBox(height: 18),
                     _UploadActionSection(
-                      onOpenGallery: () => _openReviewScreen(context),
+                      onOpenGallery: () => _openGallery(context),
                       onBrowseFiles: () => _browseFiles(context),
                     ),
                     const SizedBox(height: 26),
